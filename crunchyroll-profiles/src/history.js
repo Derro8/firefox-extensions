@@ -104,12 +104,13 @@ browser.webRequest.onBeforeRequest.addListener(
           enc.encode(str)
         );
 
-        tabExec("");
+        // tabExec("");
 
         filter.disconnect();
         // tabExec("");
       }
     }
+    tabExec("");
     return {}
   },
   {urls: ["https://www.crunchyroll.com/content/v2/*/watch-history?page_size=*"]},

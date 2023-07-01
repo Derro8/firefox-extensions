@@ -7,6 +7,8 @@ if(document.body.querySelector(".flash-message__wrapper--UWCF8"))
   document.body.querySelector(".flash-message__wrapper--UWCF8").remove();
 `
 
+// const mousePos
+
 function tabExec(script) {
   browser.tabs.executeScript({
     code: removeError + script

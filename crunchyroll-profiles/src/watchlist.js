@@ -24,13 +24,10 @@ browser.webRequest.onBeforeRequest.addListener(
                         postJS.playhead = data.playhead;
                         postJS.never_watched = data.never_watched;
                         postJS.fully_watched = data.fully_watched
+                        postJS.is_favorite = false;
 
                         watchlist.items.push(postJS)
-                        _item[storage.currentUser.toString()]["watchlist"] = watchlist;
-                        browser.storage.local.set({
-                            [storage.currentUser.toString()]: _item[storage.currentUser.toString()]
-                        })
-                        // storage.set(storage.currentUser, "watchlist", watchlist);
+                        storage.set(storage.currentUser, "watchlist", watchlist);
                     })
 
                     browser.storage.local.get("token").then((item) => {
@@ -69,6 +66,7 @@ browser.webRequest.onBeforeRequest.addListener(
                         postJS.panel = data.panel;
                         postJS.playhead = data.playhead;
                         postJS.never_watched = data.never_watched;
+                        postJS.is_favorite = false;
                         postJS.fully_watched = data.fully_watched
 
                         watchlist.items.push(postJS)
@@ -158,7 +156,7 @@ browser.webRequest.onBeforeRequest.addListener(
                     watchlist.items.reverse();
                     for(let i = 0; i < watchlist.items.length; i++) {
                         let item = watchlist.items[i];
-                        console.log(item);
+
                         data.data.push({
                             playhead: item.playhead,
                             fully_watched: item.fully_watched,
@@ -190,26 +188,47 @@ browser.webRequest.onBeforeRequest.addListener(
 
 browser.webRequest.onBeforeRequest.addListener(
     (details) => {
+        let decoder = new TextDecoder('utf-8');
+
         let id = details.url.split("?")[0].split("").reverse().join("").split("/")[0].split("").reverse().join("");
 
         storage.get(storage.currentUser, "watchlist", (watchlist) => {
             watchlist.items.reverse();
-
-            for(let i = 0; i < watchlist.items.length; i++) {
-                if(watchlist.items[i].content_id == id) {
-                    watchlist.items.pop(i);
-                    break;
+            if(details.method === "DELETE") {
+                for(let i = 0; i < watchlist.items.length; i++) {
+                    if(watchlist.items[i].content_id == id) {
+                        watchlist.items.pop(i);
+                        break;
+                    }
                 }
             }
+
+            if(details.method === "PATCH") {
+                for(let i = 0; i < watchlist.items.length; i++) {
+                    if(watchlist.items[i].content_id == id) {
+                        let data = JSON.parse(decoder.decode(details.requestBody.raw[0].bytes));
+                        console.log(data)
+                        for(let key of Object.keys(data)){
+                            console.log(key)
+                            watchlist.items[i][key] = data[key]
+                        }
+                        break;
+                    }
+                }
+            }
+
+            console.log(watchlist)
 
             storage.set(storage.currentUser, "watchlist", watchlist)
 
             tabExec("");
         })
+
+        // if(details.method == "DELETE")
         return {cancel: true}
     },
     {urls: ["https://www.crunchyroll.com/content/v2/*/watchlist/*?preferred_audio_language=*&locale=*"]},
-    ["blocking"]
+    ["blocking", "requestBody"]
 );
 
 browser.webRequest.onBeforeRequest.addListener(

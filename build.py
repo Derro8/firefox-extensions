@@ -19,9 +19,13 @@ if os.path.exists(directory) and os.path.isdir(directory):
 
         if(os.path.exists(f"{directory}\\builds\\{os.path.basename(directory)}-{js['version']}.xpi")):
             versions = js["version"].split(".")
-            last_version = versions[len(versions) - 1]
+            last_version = int(versions[len(versions) - 1])
 
-            versions[len(versions) - 1] = str(int(last_version) + 1)
+            if(last_version + 1 >= 1000): # will probably never happen but just incase.
+                second_last_version = int(versions[len(versions) - 2])
+                versions[len(versions) - 2] = str(second_last_version + 1)
+
+            versions[len(versions) - 1] = str(last_version + 1)
 
             js["version"] = ".".join(versions)
             with open(f"{directory}\\manifest.json", "w") as fw:
@@ -36,5 +40,3 @@ if os.path.exists(directory) and os.path.isdir(directory):
                         xpi.writestr(info, buffer)
         
         os.remove(f"{directory}\\builds\\{os.path.basename(directory)}-{js['version']}.zip")
-
-        # os.rename(f"{directory}\\{os.path.basename(directory)}-{js['version']}.zip", f"{directory}\\{os.path.basename(directory)}-{js['version']}.xpi")

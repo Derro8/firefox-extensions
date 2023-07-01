@@ -23,6 +23,7 @@ if os.path.exists(directory) and os.path.isdir(directory):
 
             if(last_version + 1 >= 1000): # will probably never happen but just incase.
                 second_last_version = int(versions[len(versions) - 2])
+                last_version = -1
                 versions[len(versions) - 2] = str(second_last_version + 1)
 
             versions[len(versions) - 1] = str(last_version + 1)

@@ -36,6 +36,7 @@ function loadAvatar() {
         storage.get(profiles.current, "profile", (profile) => {
             document.body.querySelector(".avatar").src = "https://static.crunchyroll.com/assets/avatar/170x170/" + profile.avatar;
             document.body.querySelector(".username").innerText = profile.username;
+            document.body.querySelector(".wallpaper").src = "https://static.crunchyroll.com/assets/wallpaper/720x180/" + profile.wallpaper;
         })
     })
 }

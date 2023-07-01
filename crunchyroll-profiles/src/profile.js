@@ -53,6 +53,7 @@ browser.webRequest.onBeforeRequest.addListener(
 
     if(details.method === "PATCH") {
       storage.get(storage.currentUser, "profile", (profile) => {
+        // console.log(profile)
         let data = JSON.parse(decoder.decode(details.requestBody.raw[0].bytes));
 
         for(let key of Object.keys(data)){

@@ -42,7 +42,7 @@ body {
     position: absolute;
     top: 5px;
     left: 2.5%;
-    border-radius: 5px;
+    border-radius: 5px 5px 0 0;
     width: 95%;
     height: 33%;
     /* height: 10%; */
@@ -51,12 +51,12 @@ body {
 
 .block {
     position: absolute;
-    top: 98px;
+    top: 99px;
     left: 2.5%;
     background-color: rgb(25, 26, 30);
-    border-radius: 6px;
+    border-radius: 0 0 6px 6px;
     width: 95%;
-    height: 60%;
+    height: 60.5%;
 }
 
 .add {
@@ -74,7 +74,7 @@ body {
 .username {
     position: absolute;
     top: 140px;
-    left: 37%;
+    left: 34%;
     font-family: Lato,Helvetica Neue,helvetica,sans-serif;
     color: rgb(255, 255, 255);
 }

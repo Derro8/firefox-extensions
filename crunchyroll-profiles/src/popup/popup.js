@@ -32,11 +32,11 @@ window.addEventListener("keydown", (event) => {
 function loadAvatar() {
     storage.getUsers((profiles) => {
         storage.currentUser = profiles.current;
-        console.log(profiles)
         storage.get(profiles.current, "profile", (profile) => {
-            document.body.querySelector(".avatar").src = "https://static.crunchyroll.com/assets/avatar/170x170/" + profile.avatar;
-            document.body.querySelector(".username").innerText = profile.username;
-            document.body.querySelector(".wallpaper").src = "https://static.crunchyroll.com/assets/wallpaper/720x180/" + profile.wallpaper;
+            console.log(profile !== undefined)
+            document.body.querySelector(".avatar").src = profile !== undefined && "https://static.crunchyroll.com/assets/avatar/170x170/" + profile.avatar || "https://static.crunchyroll.com/assets/avatar/170x170/0001-cr-white-orange.png";
+            document.body.querySelector(".username").innerText = profile !== undefined && profile.username || "Profile" + profiles.current.toString();
+            document.body.querySelector(".wallpaper").src = profile !== undefined && "https://static.crunchyroll.com/assets/wallpaper/720x180/" + profile.wallpaper || "https://static.crunchyroll.com/assets/wallpaper/720x180/01-crunchyroll-generic-hime.png";
         })
     })
 }
@@ -44,7 +44,6 @@ function loadAvatar() {
 loadAvatar();
 
 function nextAvatar() {
-    // console.log("wow")
     storage.getUsers((profiles) => {
         if(profiles.others.length > 1 & profiles.current < profiles.others.length - 1) {
             profiles.current++;
@@ -58,8 +57,6 @@ function addAvatar(){
     storage.getUsers((profiles) => {
         profiles.current++;
         profiles.others[profiles.current.toString()] = profiles.current;
-
-        // console.log(profiles)
 
         browser.storage.local.set({profiles: profiles})
         loadAvatar();

@@ -3,7 +3,7 @@ Prevents your history from being saved to any crunchyroll server,
 instead it saves it to your browser.
 */
 
-// console.log(storage)
+// too lazy to add the request module to this lol
 
 browser.webRequest.onBeforeRequest.addListener(
   (details) => {
@@ -23,16 +23,19 @@ browser.webRequest.onBeforeRequest.addListener(
         if(history === undefined || history.items == undefined){
           filter.disconnect();
           return;
-          // storage.set(storage.currentUser, "history", {})
-          // retur
-          // history = {};
         }
 
         history.items.reverse()
 
         data.total = history.items.length;
+        let found = []
         for(let i = 0; i < history.items.length; i++) {
           let hitem = history.items[i];
+
+          if(found.indexOf(hitem.panel.episode_metadata.series_id) !== -1)
+            continue
+          
+          found.push(hitem.panel.episode_metadata.series_id)
 
           data.data.push({
             playhead: hitem.playhead,
@@ -104,10 +107,7 @@ browser.webRequest.onBeforeRequest.addListener(
           enc.encode(str)
         );
 
-        // tabExec("");
-
         filter.disconnect();
-        // tabExec("");
       }
     }
     tabExec("");
@@ -125,38 +125,35 @@ browser.webRequest.onBeforeRequest.addListener(
                 new Uint8Array(details.requestBody.raw[0].bytes))));
 
               if(history === undefined || history.items === undefined){
-                // storage.set(storage.currentUser, "history", {})
                 history = {items: []};
-                // return
               }
-
-              // console.log(history)
   
               let found = false;
-              for(const item of history.items) {
+              for(let i = 0; i < history.items.length; i++) {
+                let item = history.items[i];
                 if(item.content_id == postJS.content_id) {
-                    item.playhead = postJS.playhead;
-                    found = true;
+                  history.items.pop(i);
+
+                  if(item.panel === undefined || item.panel === null)
                     break;
-                }
-              }
 
-              if(found === false){
-                let xml = new XMLHttpRequest();
-
-                xml.addEventListener("load", () => {
-                  let panel = JSON.parse(xml.responseText).data[0];
-
-                  postJS.panel = panel;
+                  postJS.panel = item.panel;
 
                   history.items.push(postJS);
                   storage.set(storage.currentUser, "history", history);
-                })
+                  found = true;
+                  // return;
+                }
+              }
 
-                browser.storage.local.get("token").then((item) => {
-                  xml.open("GET", "https://www.crunchyroll.com/content/v2/cms/objects/" + postJS.content_id + "?ratings=true&locale=en-US");
-                  xml.setRequestHeader("Authorization", "Bearer " + item.token);
-                  xml.send();
+              if(found === false) { 
+                crunchyroll.send({
+                  url: "https://www.crunchyroll.com/content/v2/cms/objects/" + postJS.content_id + "?ratings=true&locale=en-US",
+                  method: "GET"
+                }, (xml) => {
+                  postJS.panel = JSON.parse(xml.responseText).data[0];
+                  history.items.push(postJS);
+                  storage.set(storage.currentUser, "history", history);
                 })
               }
           })
@@ -190,10 +187,10 @@ browser.webRequest.onBeforeRequest.addListener(
                     total: 1,
                     data: [
                         {
-                            "playhead": item.playhead,
-                            "content_id": item.content_id,
-                            "fully_watched": false,
-                            "last_modified": "2023-06-23T20:54:00Z"
+                            playhead: item.playhead,
+                            content_id: item.content_id,
+                            fully_watched: false,
+                            last_modified: "2023-06-23T20:54:00Z"
                         }
                     ],
                     meta: {}

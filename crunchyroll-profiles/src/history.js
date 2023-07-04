@@ -99,8 +99,6 @@ browser.webRequest.onBeforeRequest.addListener(
         }
       })
       filter.onstop = () => {
-        console.log(data)
-
         str = JSON.stringify(data)
 
         filter.write(
@@ -152,6 +150,19 @@ browser.webRequest.onBeforeRequest.addListener(
                   method: "GET"
                 }, (xml) => {
                   postJS.panel = JSON.parse(xml.responseText).data[0];
+                  storage.get(storage.currentUser, "watchlist", (watchlist) => {
+
+                    for(const item of watchlist.items) {
+                      if(item.panel.episode_metadata.series_id === postJS.panel.episode_metadata.series_id) {
+                        item.playhead = postJS.playhead;
+                        item.fully_watched = postJS.fully_watched;
+                        item.panel = postJS.panel;
+                        break;
+                      }
+                    }
+
+                    storage.set(storage.currentUser, "watchlist", watchlist)
+                  })
                   history.items.push(postJS);
                   storage.set(storage.currentUser, "history", history);
                 })

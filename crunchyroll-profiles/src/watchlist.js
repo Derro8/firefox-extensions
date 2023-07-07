@@ -13,6 +13,7 @@ request.block(["https://www.crunchyroll.com/content/v2/*/watchlist?preferred_aud
                 url: "https://www.crunchyroll.com/content/v2/discover/up_next/" + info.body.content_id +"?preferred_audio_language=ja-JP&locale=en-US",
                 method: "GET"
             }, (xml) => {
+                console.log(xml.responseText)
                 let data = JSON.parse(xml.responseText).data[0];
 
                 info.body.panel = data.panel;

@@ -10,3 +10,7 @@ const crunchyroll = {
         )
     }
 }
+
+browser.storage.local.get("token").then(item => {
+  crunchyroll.token = item.token;  
+})

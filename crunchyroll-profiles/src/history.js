@@ -150,8 +150,9 @@ browser.webRequest.onBeforeRequest.addListener(
                   method: "GET"
                 }, (xml) => {
                   postJS.panel = JSON.parse(xml.responseText).data[0];
+                  history.items.push(postJS);
+                  storage.set(storage.currentUser, "history", history);
                   storage.get(storage.currentUser, "watchlist", (watchlist) => {
-
                     for(const item of watchlist.items) {
                       if(item.panel.episode_metadata.series_id === postJS.panel.episode_metadata.series_id) {
                         item.playhead = postJS.playhead;
@@ -163,8 +164,6 @@ browser.webRequest.onBeforeRequest.addListener(
 
                     storage.set(storage.currentUser, "watchlist", watchlist)
                   })
-                  history.items.push(postJS);
-                  storage.set(storage.currentUser, "history", history);
                 })
               }
           })

@@ -16,8 +16,8 @@ browser.webRequest.onBeforeRequest.addListener(
       };
       
       var str = dec.decode(event.data, {stream: true});
-
       crunchyroll.token = JSON.parse(str).access_token;
+      browser.storage.local.set({access: crunchyroll.token})
           
       filter.write(event.data);
     }

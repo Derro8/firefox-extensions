@@ -13,20 +13,20 @@ function tabExec(script) {
   })
 }
 
-request.block(["https://www.crunchyroll.com/accounts/v1/me/profile"], "PATCH", (info) => {
+request.block([URLS.profile], "PATCH", (info) => {
   storage.get(storage.currentUser, "profile", (profile) => {
     let data = info.body;
 
     for(let key of Object.keys(data)){
-      profile[key] = data[key]
+      profile[key] = data[key];
     }
 
-    storage.set(storage.currentUser, "profile", profile)
-    tabExec("window.location.reload();")
+    storage.set(storage.currentUser, "profile", profile);
+    tabExec("window.location.reload();");
   })
 })
 
-request.override(["https://www.crunchyroll.com/accounts/v1/me/profile"], "GET", async (info) => {
+request.override([URLS.profile], "GET", async (info) => {
   return storage.getUsers((profiles) => {
     storage.currentUser = profiles.current
     return storage.get(storage.currentUser, "profile", (profile) => {
@@ -35,7 +35,7 @@ request.override(["https://www.crunchyroll.com/accounts/v1/me/profile"], "GET", 
         return info.body;
       }
       
-      return JSON.stringify(profile)
+      return JSON.stringify(profile);
     })
   })
 })

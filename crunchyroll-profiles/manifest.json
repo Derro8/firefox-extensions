@@ -1,17 +1,18 @@
 {
     "name": "Crunchyroll Profile",
     "description": "Allows you to have your own profile for a shared crunchyroll account.",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "manifest_version": 2,
     "background": {
         "scripts": [
+            "src/modules/urls.js",
             "src/modules/storage.js",
             "src/modules/request.js",
             "src/modules/crunchyroll.js",
             "src/profile.js",
-            "src/history.js",
             "src/token.js",
-            "src/watchlist.js"
+            "src/watchlist.js",
+            "src/history.js"
         ],
         "persistent": true
     },

@@ -2,7 +2,7 @@
  Saves the watchlist.
 */
 
-request.block(["https://www.crunchyroll.com/content/v2/*/watchlist?preferred_audio_language=*&locale=*"], "POST", (info) => {
+request.block([URLS.watchlist.save], "POST", (info) => {
     storage.get(storage.currentUser, "watchlist", (watchlist) => {
         let toggle = false;
         if(watchlist === undefined) {
@@ -62,7 +62,7 @@ request.block(["https://www.crunchyroll.com/content/v2/*/watchlist?preferred_aud
     })
 })
 
-request.block(["https://www.crunchyroll.com/content/v2/*/watchlist?content_ids=*&locale=*"], ["GET", "DELETE"], (info) => {
+request.block([URLS.watchlist.check_exist], ["GET", "DELETE"], (info) => {
     storage.get(storage.currentUser, "watchlist", (watchlist) => {
         if(watchlist === undefined)
             return;
@@ -101,7 +101,7 @@ request.block(["https://www.crunchyroll.com/content/v2/*/watchlist?content_ids=*
     })
 })
 
-request.override(["https://www.crunchyroll.com/content/v2/discover/*/watchlist?locale=*&n=*"], "GET", async (info) => {
+request.override([URLS.watchlist.watchlist], "GET", async (info) => {
     return storage.get(storage.currentUser, "watchlist", (watchlist) => {
         let data = {
             total: 0,
@@ -162,8 +162,7 @@ request.block(["https://www.crunchyroll.com/content/v2/*/watchlist/*?preferred_a
     })
 })
 
-request.override(["https://www.crunchyroll.com/content/v2/discover/*/watchlist?order=*&n=*"], "GET", async (info) => {
-    // for some reason this link broke for me even when I don't have the extension installed, so if this doesn't work rip.
+request.override([URLS.watchlist.history], "GET", async (info) => {
     return storage.get(storage.currentUser, "watchlist", (watchlist) => {
         let data = {
             total: 0,

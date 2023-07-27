@@ -41,8 +41,6 @@ const request = {
                 if(typeof(method) === "string" && details.method.toLowerCase() !== method.toLowerCase() || typeof(method) === "object" && method.indexOf(details.method) == -1)
                     return {}
                 let filter = browser.webRequest.filterResponseData(details.requestId);
-                let decoder = new TextDecoder();
-                let encoder = new TextEncoder();
 
                 callback({details: details, filter: filter, body: details.requestBody !== null && details.requestBody.raw !== null && JSON.parse(decodeURIComponent(String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes))))})
 

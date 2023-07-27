@@ -25,6 +25,6 @@ browser.webRequest.onBeforeRequest.addListener(
       filter.disconnect();
     }
   },
-  {urls: ["https://www.crunchyroll.com/auth/v1/token"]},
+  {urls: [URLS.token]},
   ["blocking"]
 );

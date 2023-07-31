@@ -11,7 +11,7 @@ const URLS = {
         delete: "https://www.crunchyroll.com/content/v2/*/watch-history/*?preferred_audio_language=*&locale=*",
         playheads: "https://www.crunchyroll.com/content/v2/*/playheads?content_ids=*&locale=*",
         save_playhead: "https://www.crunchyroll.com/content/v2/*/playheads?preferred_audio_language=*&locale=*",
-        watch_history: "https://www.crunchyroll.com/content/v2/*/watch-history?page_size=*",
+        watch_history: "https://www.crunchyroll.com/content/v2/*/watch-history?*",
         continue_watching: "https://www.crunchyroll.com/content/v2/discover/*/history?locale=*&n=*&ratings=*"
     }
-}
+};

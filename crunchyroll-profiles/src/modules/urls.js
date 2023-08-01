@@ -8,7 +8,7 @@ const URLS = {
         watchlist: "https://www.crunchyroll.com/content/v2/discover/*/watchlist?locale=*&n=*"
     },
     history: {
-        delete: "https://www.crunchyroll.com/content/v2/*/watch-history/*?preferred_audio_language=*&locale=*",
+        delete: "https://www.crunchyroll.com/content/v2/*/watch-history*",
         playheads: "https://www.crunchyroll.com/content/v2/*/playheads?content_ids=*&locale=*",
         save_playhead: "https://www.crunchyroll.com/content/v2/*/playheads?preferred_audio_language=*&locale=*",
         watch_history: "https://www.crunchyroll.com/content/v2/*/watch-history?*",

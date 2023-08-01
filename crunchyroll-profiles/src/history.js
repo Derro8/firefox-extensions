@@ -162,7 +162,7 @@ request.override([URLS.history.playheads], "GET", (info) => {
 })
 
 request.block([URLS.history.delete], "DELETE", (info) => {
-  let id = info.details.url.split("watch-history/")[1].split("?")[0];
+  let id = info.details.url.split("watch-history")[1].split("?")[0];
   
   return storage.get(storage.currentUser, "history", (history) => {
     if(history === undefined) {
@@ -173,7 +173,7 @@ request.block([URLS.history.delete], "DELETE", (info) => {
 
     for(const i in history.items) {
       let item = history.items[i];
-      if(item.content_id == id) {
+      if(item.content_id == id || id === "") {
         history.items.pop(i);
       }
     }

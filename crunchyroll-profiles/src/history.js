@@ -40,107 +40,42 @@ request.override([URLS.history.continue_watching], "GET", (info) => {
   })
 })
 
-// This seemed to help issue #1 a little bit.
-
-browser.webRequest.onBeforeRequest.addListener(
-  (details) => {
-    let filter = browser.webRequest.filterResponseData(details.requestId);
-    let enc = new TextEncoder();
-
+request.override([URLS.history.watch_history], "GET", (info) => {
+  return storage.get(storage.currentUser, "history", (history) => {
     let data = {
       total: 0,
       data: [],
-      meta: {
-        prev_page: "",
-        next_page: ""
-      }
-    }
-    storage.get(storage.currentUser, "history", (history) => {
-      // data.total = history.items.length;
-      for(let i = history.items.length - 1; i > 1; i--) {
-        let hitem = history.items[i];
-        // console.log(hitem);
-
-        data.data.push({
-          playhead: hitem.playhead,
-          fully_watched: hitem.panel.episode_metadata.duration_ms / 1000 <= hitem.playhead,
-          date_played: "2023-06-28T01:16:44Z",
-          new: false,
-          parent_id: hitem.panel.episode_metadata.duration_ms,
-          parent_type: "series",
-          id: hitem.content_id,
-          panel: hitem.panel
-        })
-      }
-
-      data.total = data.data.length
-      let last_pos = 0;
-      let str = JSON.stringify(data)
-      filter.ondata = event => {
-          let chunk = str.substring(last_pos, last_pos + event.data.byteLength) 
-
-          if(chunk === "")
-            return;
-
-          filter.write(
-            enc.encode(chunk)
-          );
-
-          last_pos += event.data.byteLength;
-      }
-    })
-
-    filter.onstop = (event) => {
-      filter.disconnect();
+      meta: {}
     }
     
+    if(history === undefined || history.items === undefined){
+      return JSON.stringify(data);
+    }
+
+    history.items.reverse();
+
+    data.total = history.items.length;
+
+    for(let i = 0; i < history.items.length; i++) {
+      let hitem = history.items[i];
+
+      data.data.push({
+        playhead: hitem.playhead,
+        fully_watched: hitem.panel.episode_metadata.duration_ms / 1000 <= hitem.playhead,
+        date_played: "2023-06-28T01:16:44Z",
+        new: false,
+        parent_id: hitem.panel.episode_metadata.duration_ms,
+        parent_type: "series",
+        id: hitem.content_id,
+        panel: hitem.panel
+      })
+    }
+
     tabExec("");
-    return {}
-  },
-  {urls: [URLS.history.watch_history]},
-  ["blocking"]
-);
 
-// request.override([URLS.history.watch_history], "GET", (info) => {
-//   return storage.get(storage.currentUser, "history", (history) => {
-//     let data = {
-//       total: 0,
-//       data: [],
-//       meta: {}
-//     }
-
-//     console.log(history)
-    
-//     if(history === undefined || history.items === undefined){
-//       return JSON.stringify(data);
-//     }
-
-//     history.items.reverse();
-
-//     data.total = history.items.length;
-
-//     for(let i = 0; i < history.items.length; i++) {
-//       let hitem = history.items[i];
-
-//       data.data.push({
-//         playhead: hitem.playhead,
-//         fully_watched: hitem.panel.episode_metadata.duration_ms / 1000 <= hitem.playhead,
-//         date_played: "2023-06-28T01:16:44Z",
-//         new: false,
-//         parent_id: hitem.panel.episode_metadata.duration_ms,
-//         parent_type: "series",
-//         id: hitem.content_id,
-//         panel: hitem.panel
-//       })
-//     }
-
-//     tabExec("");
-
-//     console.log(data)
-
-//     return JSON.stringify(data)
-//   })
-// })
+    return JSON.stringify(data)
+  })
+})
 
 request.block([URLS.history.save_playhead], "POST", (info) => {
   storage.get(storage.currentUser, "history", (history) => {

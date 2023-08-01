@@ -19,21 +19,16 @@ const request = {
                 let filter = browser.webRequest.filterResponseData(details.requestId);
                 let decoder = new TextDecoder();
                 let encoder = new TextEncoder();
-                let str = undefined;
+                let body = "";
 
-                filter.ondata = async (event) => {
-                    if(str === undefined) {
-                        str = 1; // placeholder
-                        str = await callback({details: details, encoder: encoder, decoder: decoder, filter: filter, body: details.requestBody === null && decoder.decode(event.data, {stream: true}) || JSON.parse(decodeURIComponent(String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes))))});
-                    }
-                    
-                    if(filter.status !== "disconnected" && filter.status !== "closed" && typeof(str) === "string") {
-                        // console.log(details.url, filter.status);
-                        // console.log(str !== undefined);
-                        
-                        filter.write(str !== undefined && encoder.encode(str) || event.data)
-                        filter.disconnect();
-                    }
+                filter.ondata = (event) => {
+                    body += details.requestBody === null && decoder.decode(event.data, {stream: true}) || decodeURIComponent(String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes)));
+                }
+
+                filter.onstop = async (event) => {
+                    let str = await callback({details: details, encoder: encoder, decoder: decoder, filter: filter, body: body});
+                    filter.write(encoder.encode(str))
+                    filter.disconnect();
                 }
 
                 return {}

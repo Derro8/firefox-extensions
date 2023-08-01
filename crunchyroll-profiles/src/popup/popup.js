@@ -33,25 +33,14 @@ function loadAvatar() {
     storage.getUsers((profiles) => {
         storage.currentUser = profiles.current;
         storage.get(profiles.current, "profile", (profile) => {
-            console.log(profile !== undefined)
             document.body.querySelector(".avatar").src = profile !== undefined && "https://static.crunchyroll.com/assets/avatar/170x170/" + profile.avatar || "https://static.crunchyroll.com/assets/avatar/170x170/0001-cr-white-orange.png";
             document.body.querySelector(".username").innerText = profile !== undefined && profile.username || "Profile" + profiles.current.toString();
-            document.body.querySelector(".wallpaper").src = profile !== undefined && "https://static.crunchyroll.com/assets/wallpaper/720x180/" + profile.wallpaper || "https://static.crunchyroll.com/assets/wallpaper/720x180/01-crunchyroll-generic-hime.png";
+            document.body.querySelector(".wallpaper").src = profile !== undefined && profile.wallpaper !== undefined && "https://static.crunchyroll.com/assets/wallpaper/720x180/" + profile.wallpaper || "https://static.crunchyroll.com/assets/wallpaper/720x180/01-crunchyroll-generic-hime.png";
         })
     })
 }
 
 loadAvatar();
-
-function nextAvatar() {
-    storage.getUsers((profiles) => {
-        if(profiles.others.length > 1 & profiles.current < profiles.others.length - 1) {
-            profiles.current++;
-            browser.storage.local.set({profiles: profiles})
-            loadAvatar();
-        }
-    })
-}
 
 function addAvatar(){
     storage.getUsers((profiles) => {
@@ -63,16 +52,24 @@ function addAvatar(){
     })
 }
 
-function previousAvatar() {
+
+document.body.querySelector(".left").addEventListener("click", () => {
     storage.getUsers((profiles) => {
-        if(profiles.others.length > 1 & profiles.current - 1 <= 0) {
+        if(profiles.others.length > 1 & profiles.current - 1 >= 0) {
             profiles.current--;
             browser.storage.local.set({profiles: profiles})
             loadAvatar();
         }
     })
-}
+});
+document.body.querySelector(".right").addEventListener("click", () => {
+    storage.getUsers((profiles) => {
+        if(profiles.others.length > 1 & profiles.current < profiles.others.length - 1) {
+            profiles.current++;
+            browser.storage.local.set({profiles: profiles})
+            loadAvatar();
+        }
+    })
+});
 
-document.body.querySelector(".left").onclick = previousAvatar;
-document.body.querySelector(".right").onclick = nextAvatar;
 document.body.querySelector(".add").onclick = addAvatar;

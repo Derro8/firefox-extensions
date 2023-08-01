@@ -86,3 +86,10 @@ body {
 .avatar:hover {
     cursor: pointer;
 }
+
+.left {
+    z-index: 100;
+}
+.right {
+    z-index: 100;
+}

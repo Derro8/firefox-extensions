@@ -25,7 +25,7 @@ const request = {
                     body += details.requestBody === null && decoder.decode(event.data, {stream: true}) || decodeURIComponent(String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes)));
                 }
 
-                filter.onstop = async (event) => {
+                filter.onstop = async () => {
                     let str = await callback({details: details, encoder: encoder, decoder: decoder, filter: filter, body: body});
                     filter.write(encoder.encode(str))
                     filter.disconnect();

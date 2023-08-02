@@ -78,8 +78,6 @@ function removeAvatar() {
         else if(profiles.current > profiles.others.length)
             profiles.current = 0;
 
-            console.log(profiles);
-
         loadAvatar();
     })
 }

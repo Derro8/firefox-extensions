@@ -42,6 +42,48 @@ function loadAvatar() {
 
 loadAvatar();
 
+function removeAvatar() {
+    storage.getUsers((profiles) => {
+        console.log(profiles);
+
+        storage.set(profiles.current, "history", undefined)
+        storage.set(profiles.current, "watchlist", undefined)
+        storage.set(profiles.current, "profile", undefined)
+
+        if(profiles.current < profiles.others.length - 1) {
+            for(let i = profiles.current + 1; i < profiles.others.length; i++){
+                storage.get(i, "history", (history) => {
+                    storage.set(i - 1, "history", history);
+                    storage.set(i, "history", undefined);
+                });
+
+                storage.get(i, "watchlist", (watchlist) => {
+                    storage.set(i - 1, "watchlist", watchlist);
+                    storage.set(i, "watchlist", undefined);
+                });
+
+                storage.get(i, "profile", (profile) => {
+                    storage.set(i - 1, "profile", profile);
+                    storage.set(i, "profile", undefined);
+                });
+
+                profiles.others[i - 1] = i - 1;
+            }
+            profiles.others.pop(profiles.others.length - 1);
+        } else
+            profiles.others.pop(profiles.current);
+
+        if(profiles.current === profiles.others.length)
+            profiles.current--;
+        else if(profiles.current > profiles.others.length)
+            profiles.current = 0;
+
+            console.log(profiles);
+
+        loadAvatar();
+    })
+}
+
 function addAvatar(){
     storage.getUsers((profiles) => {
         profiles.current++;
@@ -72,4 +114,6 @@ document.body.querySelector(".right").addEventListener("click", () => {
     })
 });
 
+
 document.body.querySelector(".add").onclick = addAvatar;
+document.body.querySelector(".remove").onclick = removeAvatar;

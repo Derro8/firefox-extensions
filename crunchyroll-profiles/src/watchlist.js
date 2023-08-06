@@ -63,72 +63,32 @@ request.block([URLS.watchlist.save], "POST", (info) => {
 })
 
 request.block([URLS.watchlist.check_exist], ["GET", "DELETE"], (info) => {
-    storage.get(storage.currentUser, "watchlist", (watchlist) => {
-        if(watchlist === undefined)
-            return;
-        let id = info.details.url.split("content_ids=")[1].split("&")[0];
-        for(const item of watchlist.items) {
-            if(item.content_id == id) {
-                tabExec(`
-                (function(selector) {
-                    return new Promise(resolve => {
-                        if (document.querySelector(selector)) {
-                            return resolve(document.querySelector(selector));
-                        }
-                
-                        const observer = new MutationObserver(mutations => {
-                            if (document.querySelector(selector)) {
-                                resolve(document.querySelector(selector));
-                                observer.disconnect();
-                            }
-                        });
-                
-                        observer.observe(document.body, {
-                            childList: true,
-                            subtree: true
-                        });
-                    });
-                })(".watchlist-toggle--LJPTQ").then((elm) => {
-                    if(elm.classList.indexOf("watchlist-toggle--is-active--eu81r") === -1)
-                        elm.classList.add("watchlist-toggle--is-active--eu81r")
-                    if(elm.classList.indexOf("watchlist-toggle--is-active--eu81r") > -1)
-                        elm.classList.remove("watchlist-toggle--is-active--eu81r")
-                })
-                `);
-                break;
-            }
-        }
-    })
+    // Pretty much just need this to block.
 })
 
 request.override([URLS.watchlist.watchlist], "GET", async (info) => {
     return storage.get(storage.currentUser, "watchlist", (watchlist) => {
-        let data = {
-            total: 0,
-            data: [],
-            meta: {
-                total_before_filter: 0
-            }
-        };
+        let data = new crunchyArray();
 
-        if(watchlist){
-            watchlist.items.reverse();
-            for(let i = 0; i < watchlist.items.length; i++) {
-                let item = watchlist.items[i];
+        if(watchlist === undefined)
+            return data.stringify();
 
-                data.data.push({
-                    playhead: item.playhead,
-                    fully_watched: item.fully_watched,
-                    new: false,
-                    is_favorite: item.is_favorite,
-                    never_watched: item.never_watched,
-                    panel: item.panel
-                })
-            }
-            data.total = data.data.length;
-            data.meta.total_before_filter = data.data.length;
-            return JSON.stringify(data)
+        watchlist.items.reverse();
+
+        for(let i = 0; i < watchlist.items.length; i++) {
+            let item = watchlist.items[i];
+
+            data.push({
+                playhead: item.playhead,
+                fully_watched: item.fully_watched,
+                new: false,
+                is_favorite: item.is_favorite,
+                never_watched: item.never_watched,
+                panel: item.panel
+            })
         }
+
+        return data.stringify();
     })
 })
 
@@ -164,23 +124,17 @@ request.block(["https://www.crunchyroll.com/content/v2/*/watchlist/*?preferred_a
 
 request.override([URLS.watchlist.history], "GET", async (info) => {
     return storage.get(storage.currentUser, "watchlist", (watchlist) => {
-        let data = {
-            total: 0,
-            data: [],
-            meta: {
-                total_before_filter: 0
-            }
-        };
+        let data = new crunchyArray();
 
         if(watchlist === undefined)
-            return JSON.stringify(data);
+            return data.stringify();
 
         watchlist.items.reverse();
 
         for(let i = 0; i < watchlist.items.length; i++) {
             let item = watchlist.items[i];
 
-            data.data.push({
+            data.push({
                 playhead: item.playhead,
                 fully_watched: item.fully_watched,
                 new: false,
@@ -189,10 +143,7 @@ request.override([URLS.watchlist.history], "GET", async (info) => {
                 panel: item.panel
             })
         }
-
-        data.total = data.data.length;
-        data.meta.total_before_filter = data.data.length;
         
-        return JSON.stringify(data)
+        return data.stringify();
     })
 })

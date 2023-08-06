@@ -5,11 +5,7 @@ instead it saves it to your browser.
 
 request.override([URLS.history.continue_watching], "GET", (info) => {
   return storage.get(storage.currentUser, "history", (history) => {
-    let data = {
-      total: 0,
-      data: [],
-      meta: {}
-    }
+    let data = new crunchyArray();
 
     if(history === undefined || history.items == undefined){
       return;
@@ -17,7 +13,6 @@ request.override([URLS.history.continue_watching], "GET", (info) => {
 
     history.items.reverse()
 
-    data.total = history.items.length;
     var found = []
 
     for(let i = 0; i < history.items.length; i++) {
@@ -28,7 +23,7 @@ request.override([URLS.history.continue_watching], "GET", (info) => {
       
       found.push(hitem.panel.episode_metadata.series_id)
 
-      data.data.push({
+      data.push({
         playhead: hitem.playhead,
         fully_watched: hitem.panel.episode_metadata.duration_ms / 1000 <= hitem.playhead,
         new: false,
@@ -36,30 +31,24 @@ request.override([URLS.history.continue_watching], "GET", (info) => {
       })
     }
 
-    return JSON.stringify(data)
+    return data.stringify();
   })
 })
 
 request.override([URLS.history.watch_history], "GET", (info) => {
   return storage.get(storage.currentUser, "history", (history) => {
-    let data = {
-      total: 0,
-      data: [],
-      meta: {}
-    }
+    let data = new crunchyArray();
     
     if(history === undefined || history.items === undefined){
-      return JSON.stringify(data);
+      return data.stringify();
     }
 
     history.items.reverse();
 
-    data.total = history.items.length;
-
     for(let i = 0; i < history.items.length; i++) {
       let hitem = history.items[i];
 
-      data.data.push({
+      data.push({
         playhead: hitem.playhead,
         fully_watched: hitem.panel.episode_metadata.duration_ms / 1000 <= hitem.playhead,
         date_played: "2023-06-28T01:16:44Z",
@@ -73,7 +62,7 @@ request.override([URLS.history.watch_history], "GET", (info) => {
 
     tabExec("");
 
-    return JSON.stringify(data)
+    return data.stringify();
   })
 })
 
@@ -139,25 +128,24 @@ request.override([URLS.history.playheads], "GET", (info) => {
 
     history.items.reverse();
 
-    let id = info.details.url.split("content_ids=")[1].split("&")[0];
+    let ids = info.details.url.split("content_ids=")[1].split("&")[0].split("%2C");
+
+    let result = new crunchyArray();
 
     for(let item in history.items) {
       item = history.items[item];
-      if(item.content_id != id) continue;
 
-      return JSON.stringify({
-        total: 1,
-        data: [
-            {
-                playhead: item.playhead,
-                content_id: item.content_id,
-                fully_watched: false,
-                last_modified: "2023-06-23T20:54:00Z"
-            }
-        ],
-        meta: {}
+      if(ids.indexOf(item.content_id) === -1) continue;
+
+      result.push({
+          playhead: item.playhead | 0,
+          content_id: item.content_id,
+          fully_watched: false,
+          last_modified: "2023-06-23T20:54:00Z"
       })
     }
+
+    return result.stringify();
   })
 })
 

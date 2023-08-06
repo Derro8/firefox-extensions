@@ -8,6 +8,8 @@ const URLS = {
         watchlist: "https://www.crunchyroll.com/content/v2/discover/*/watchlist?locale=*&n=*"
     },
     history: {
+        series: "https://www.crunchyroll.com/content/v2/cms/seasons/*/episodes?preferred_audio_language=*&locale=*",
+        up_next: "https://www.crunchyroll.com/content/v2/discover/up_next/*?preferred_audio_language=*&locale=*",
         delete: "https://www.crunchyroll.com/content/v2/*/watch-history*",
         playheads: "https://www.crunchyroll.com/content/v2/*/playheads?content_ids=*&locale=*",
         save_playhead: "https://www.crunchyroll.com/content/v2/*/playheads?preferred_audio_language=*&locale=*",

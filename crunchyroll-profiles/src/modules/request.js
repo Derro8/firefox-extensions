@@ -1,4 +1,5 @@
 const request = {
+    from: "https://www.crunchyroll.com",
     send: (request, callback, before) => {
         let xml = new XMLHttpRequest();
 
@@ -13,8 +14,11 @@ const request = {
     override: (urls, methods, callback) => {
         browser.webRequest.onBeforeRequest.addListener(
             (details) => {
+                if(details.documentUrl.includes(request.from) === false && details.originUrl.includes(request.from) === false && details.frameId === 0)
+                    return {};
+
                 if(typeof(methods) === "string" && details.method.toLowerCase() !== methods.toLowerCase() || typeof(methods) === "object" && methods.indexOf(details.method) == -1)
-                    return {}
+                    return {};
                 
                 let filter = browser.webRequest.filterResponseData(details.requestId);
                 let decoder = new TextDecoder();
@@ -22,12 +26,14 @@ const request = {
                 let body = "";
 
                 filter.ondata = (event) => {
-                    body += details.requestBody === null && decoder.decode(event.data, {stream: true}) || decodeURIComponent(String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes)));
+                    body += (details.requestBody === null || details.requestBody.raw === undefined) && decoder.decode(event.data, {stream: true}) || decodeURIComponent(String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes)));
                 }
 
                 filter.onstop = async () => {
                     let str = await callback({details: details, encoder: encoder, decoder: decoder, filter: filter, body: body});
+
                     filter.write(encoder.encode(str))
+                    
                     filter.disconnect();
                 }
 

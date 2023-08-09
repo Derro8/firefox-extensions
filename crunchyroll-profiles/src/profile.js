@@ -33,7 +33,7 @@ request.override([URLS.profile], "GET", async (info) => {
     storage.currentUser = profiles.current
     return storage.get(storage.currentUser, "profile", (profile) => {
       if(profile === undefined) {
-        storage.set(storage.currentUser, "profile", prof);
+        storage.set(storage.currentUser, "profile", profile);
         return info.body;
       }
       

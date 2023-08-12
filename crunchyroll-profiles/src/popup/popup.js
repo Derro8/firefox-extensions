@@ -85,7 +85,13 @@ function removeAvatar() {
 function addAvatar(){
     storage.getUsers((profiles) => {
         profiles.current++;
+
+        let profile = new crunchyProfile();
+
+        profile.username = "Profile " + profiles.current.toString();
+
         profiles.others[profiles.current.toString()] = profiles.current;
+        storage.set(profiles.current, "profile", profile.profile);
 
         browser.storage.local.set({profiles: profiles})
         loadAvatar();

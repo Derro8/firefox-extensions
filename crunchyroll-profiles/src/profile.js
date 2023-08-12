@@ -29,13 +29,26 @@ request.block([URLS.profile], "PATCH", (info) => {
 request.override([URLS.profile], "GET", async (info) => {
   
   return storage.getUsers((profiles) => {
+    // TODO: Finish "Who is watching?" page.
     // browser.windows.create({url: browser.extension.getURL("/src/page/profiles.html")});
+    
     storage.currentUser = profiles.current
+
     return storage.get(storage.currentUser, "profile", (profile) => {
+
       if(profile === undefined) {
-        storage.set(storage.currentUser, "profile", JSON.parse(info.body));
-        return info.body;
+        let prof = JSON.parse(info.body);
+        
+        profile = new crunchyProfile();
+
+        profile.username = prof.username;
+
+        storage.set(storage.currentUser, "profile", profile);
       }
+
+      // Save original profile so we can revert to it later.
+
+      browser.storage.local.set({original_profile: info.body});
       
       return JSON.stringify(profile);
     })

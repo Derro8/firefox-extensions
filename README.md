@@ -15,13 +15,18 @@ Download source:
     git submodule update
 
 
-## Building
+## Tools
 
-Build Extension:
+Create Extension:
 
-    cd firefox-extensions
-    py -3 build.py ./crunchyroll-profiles 
+    py tools/build.py --create --name "Example Extension" --description "This is an example extension." --version "0.0.1" --manifest-version 2 --permsission webRequests,unlimitedStorage
 
+Edit Extension:
+    py tools/build.py --edit --name "Example Extension" --description "This is an example of changing the description." --version 0.0.2
+
+Update Extension:
+
+    py tools/build.py --update --name "Crunchyroll Profles"
 
 
 ## Contributing

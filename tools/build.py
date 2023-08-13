@@ -39,21 +39,21 @@ extension_info.add_argument("-m", "--manifest-version", type=int, default=2, hel
 
 args = parser.parse_args()
 
-directory = os.path.dirname(os.path.realpath(__file__))
+directory = os.getcwd()
 
 match(args.build, args.create, args.edit, args.update):
     case (True, False, False, False):
         print("Building the extension...")
         
-        with open(f"{directory}\\{args.name}\\manifest.json", "r") as f:
+        with open(f"{directory}\\projects\\{args.name}\\manifest.json", "r") as f:
             manifest = json.load(f)
         
         manifest["version"] = args.version
         
-        with open(f"{directory}\\{args.name}\\manifest.json", "w") as f:
+        with open(f"{directory}\\projects\\{args.name}\\manifest.json", "w") as f:
             json.dump(manifest, f, indent=4)
         
-        xpidir(args.name, f"{directory}\\{args.name}", args.version)
+        xpidir(args.name, f"{directory}\\projects\\{args.name}", args.version)
         
     case (False, True, False, False):
         print("Creating the extension...")
@@ -78,15 +78,15 @@ match(args.build, args.create, args.edit, args.update):
             "permissions": permissions
         }
         
-        os.mkdir(f"{directory}\\{args.name}")
+        os.mkdir(f"{directory}\\projects\\{args.name}")
         
-        with open(f"{directory}\\{args.name}\\manifest.json", "w") as f:
+        with open(f"{directory}\\projects\\{args.name}\\manifest.json", "w") as f:
             json.dump(manifest, f, indent=4)
 
     case (False, False, True, False):
         print("Editing the extension...")
         
-        with open(f"{directory}\\{args.name}\\manifest.json", "r") as f:
+        with open(f"{directory}\\projects\\{args.name}\\manifest.json", "r") as f:
             manifest = json.load(f)
         
         if(args.description != manifest["description"] and args.description != "No description was given."):
@@ -108,16 +108,17 @@ match(args.build, args.create, args.edit, args.update):
         
         print(json.dumps(manifest, indent=4))
         
-        with open(f"{directory}\\{args.name}\\manifest.json", "w") as f:
+        with open(f"{directory}\\projects\\{args.name}\\manifest.json", "w") as f:
             json.dump(manifest, f, indent=4)
         
     case (False, False, False, True):
         print("Updating the extension...")
         
-        with open(f"{directory}\\{args.name}\\manifest.json", "r") as f:
+        with open(f"{directory}\\projects\\{args.name}\\manifest.json", "r") as f:
             manifest = json.load(f)
         
-        reverse_versions = manifest["version"].split(".")[::-1]
+        versions = manifest["version"].split(".")
+        reverse_versions = versions[::-1]
         
         index = 0
         
@@ -132,7 +133,7 @@ match(args.build, args.create, args.edit, args.update):
         
         manifest["version"] = ".".join(reverse_versions[::-1])
         
-        with open(f"{directory}\\{args.name}\\manifest.json", "w") as f:
+        with open(f"{directory}\\projects\\{args.name}\\manifest.json", "w") as f:
             json.dump(manifest, f, indent=4)
         
-        xpidir(args.name, f"{directory}\\{args.name}", manifest["version"])
+        xpidir(args.name, f"{directory}\\projects\\{args.name}", manifest["version"])

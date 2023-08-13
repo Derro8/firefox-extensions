@@ -22,6 +22,7 @@ Create Extension:
     py tools/build.py --create --name "Example Extension" --description "This is an example extension." --version "0.0.1" --manifest-version 2 --permsission webRequests,unlimitedStorage
 
 Edit Extension:
+
     py tools/build.py --edit --name "Example Extension" --description "This is an example of changing the description." --version 0.0.2
 
 Update Extension:

@@ -12,7 +12,7 @@ Download source:
 
     git clone https://github.com/Derro8/firefox-extensions.git
     cd firefox-extensions
-    git submodule update --remote
+    git submodule update
 
 
 ## Building

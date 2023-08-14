@@ -95,7 +95,7 @@ match(args.build, args.create, args.edit, args.update):
         if(args.version != manifest["version"] and args.version != "0.0.1"):
             manifest["version"] = args.version
         
-        if(args.manifest_version!= manifest["manifest_version"] and args.manifest != 2):
+        if(args.manifest_version!= manifest["manifest_version"]):
             manifest["manifest_version"] = args.manifest_version
             
         if(args.background_script!= ""):

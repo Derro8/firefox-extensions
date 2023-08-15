@@ -12,9 +12,7 @@ request.override([URLS.watchlist.get], "GET", (info) => {
   
       let result = new crunchyArray();
   
-      for(let item in watchlist.items) {
-        item = watchlist.items[item];
-  
+      for(let item of watchlist.items) {
         if(ids.indexOf(item.content_id) === -1) continue;
   
         result.push({

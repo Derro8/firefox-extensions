@@ -28,6 +28,7 @@ project = dir + "/projects/" + args.project
 
 if not os.path.exists(project + "/include"):
     os.mkdir(project + "/include")
+if not os.path.exists(project + "/source"):
     os.mkdir(project + "/source")
 
 with open(project + "/include/header.js", "w") as f:

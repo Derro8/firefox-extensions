@@ -27,7 +27,11 @@ Edit Extension:
 
 Update Extension:
 
-    py tools/build.py --update --name "Crunchyroll Profles"
+    py tools/build.py --update --name "Crunchyroll Profiles"
+
+Generate main.js with prebuilt headers:
+
+    py tools/script.py request,storage "Crunchyroll Profiles"
 
 
 ## Contributing
